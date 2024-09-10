@@ -1,0 +1,19 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{		
+			"name": "Debug DKBS",		
+			"type": "node",		
+			"request": "launch",		
+			"runtimeExecutable": "npm",		
+			"runtimeArgs": ["run", "dev", "--", "--inspect-brk"],	
+			"skipFiles": ["<node_internals>/**", "node_modules/**"],		
+			"autoAttachChildProcesses": true,		
+			"restart": true,		
+			"sourceMaps": true,		
+			"envFile": "${workspaceFolder}/.env",		
+			"cwd": "${workspaceRoot}",		
+			"outputCapture": "std"		
+		}	
+	]
+}
