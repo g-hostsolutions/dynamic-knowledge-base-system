@@ -1,4 +1,6 @@
-export interface ITopic {
+import { ICommonBaseEntity } from '../../../common/interfaces/commonBaseEntity.interface'
+
+export interface ITopic extends ICommonBaseEntity {
     name: string
     content: string
     version?: number

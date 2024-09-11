@@ -9,6 +9,4 @@ export const AppDataSource = new DataSource({
     synchronize: true,
     logging: process.env.CURRENT_ENVIROMENT === 'development',
     entities: [UserEntity, TopicEntity, ResourceEntity],
-    subscribers: [],
-    migrations: [],
 })

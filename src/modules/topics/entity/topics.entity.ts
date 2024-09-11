@@ -1,9 +1,8 @@
-import { Entity, Column, Tree, TreeChildren, TreeParent } from 'typeorm'
+import { Entity, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm'
 import { CommonBaseEntity } from '../../../common/entity/commonBaseEntity.entity'
 import { ITopic } from '../interface/topics.interface'
 
 @Entity()
-@Tree('closure-table')
 export class TopicEntity extends CommonBaseEntity implements ITopic {
     @Column({ type: 'varchar', length: 50 })
     name: string
@@ -14,16 +13,21 @@ export class TopicEntity extends CommonBaseEntity implements ITopic {
     @Column({ type: 'int', nullable: false, default: 1 })
     version: number
 
-    @TreeChildren()
-    children: TopicEntity[]
+    @Column({ type: 'int', nullable: true })
+    parentTopicId: number
 
-    @TreeParent()
+    @ManyToOne(() => TopicEntity, topic => topic.children, { nullable: true })
+    @JoinColumn({ name: 'parentTopicId' })
     parent: TopicEntity
+
+    @OneToMany(() => TopicEntity, topic => topic.parent)
+    children: TopicEntity[]
 
     add(child: TopicEntity): void {
         if (child) {
             this.children.push(child)
             child.parent = this
+            child.parentTopicId = this.id
         }
     }
 
@@ -31,6 +35,7 @@ export class TopicEntity extends CommonBaseEntity implements ITopic {
         this.children = this.children.filter(c => c.id !== child.id)
         if (child.parent === this) {
             child.parent = null
+            child.parentTopicId = null
         }
     }
 

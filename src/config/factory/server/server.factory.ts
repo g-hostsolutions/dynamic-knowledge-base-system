@@ -1,34 +1,50 @@
-import express, { Application } from 'express'
-import bodyParser from 'body-parser'
+import express, { Application, json, urlencoded } from 'express'
 import { Server } from 'http'
 import { AppDataSource } from '../../database/ormconfig'
 import { RouteFactory } from '../routes/routes.factory'
 import { runAllSeeds } from '../../../common/seeds'
 import { authMiddleware } from '../../middlewares/auth/auth.middleware'
+import { ErrorHandler } from '../../middlewares/error/errorHandler.middleware'
+import { checkUserRoleMiddleware } from '../../middlewares/userRoles/userAuth.middleware'
 
 export class ServerFactory {
     private app: Application
+
     private server: Server | null = null
 
     constructor() {
         this.app = express()
-        this.configureMiddleware()
+        this.configureInitialMiddlewares()
+        this.disableHeaders()
         this.configureRoutes()
+        this.configureMiddleware()
     }
 
     public getApp(): Application {
         return this.app
     }
 
-    private configureMiddleware(): void {
+    private configureInitialMiddlewares() {
         console.log('Server is configuring middlewares...')
-        this.app.use(bodyParser.json())
+        this.app.use(json())
+        this.app.use(urlencoded({ extended: false }))
         this.app.use(authMiddleware)
+        this.app.use(checkUserRoleMiddleware)
+    }
+
+    private configureMiddleware(): void {
+        this.app.use(ErrorHandler.handle)
+        console.log('Server deployed middlewares...')
     }
 
     private configureRoutes(): void {
         const routeFactory = new RouteFactory()
         routeFactory.applyRoutes(this.app)
+    }
+
+    private disableHeaders() {
+        console.log('Server is disabling unsafe headers...')
+        this.app.disable('x-powered-by')
     }
 
     private async initializeDatabase(): Promise<void> {
