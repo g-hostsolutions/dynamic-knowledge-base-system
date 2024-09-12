@@ -27,9 +27,4 @@ describe('RouteFactory', () => {
         const [router] = useSpy.mock.calls[0]
         expect(router).toBeDefined()
     })
-
-    // test('should configure /api/users route', async () => {
-    //     const response = await request(app).get('/api/users')
-    //     expect(response.status).not.toBe(404)
-    // })
 })

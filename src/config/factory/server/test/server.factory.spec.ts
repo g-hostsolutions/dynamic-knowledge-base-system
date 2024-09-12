@@ -42,7 +42,7 @@ describe('ServerFactory', () => {
         if (serverFactory['server']) {
             await serverFactory.stop()
         }
-        jest.clearAllTimers() // Limpa todos os timers
+        jest.clearAllTimers()
     })
 
     afterAll(() => {

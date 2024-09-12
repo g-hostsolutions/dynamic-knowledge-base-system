@@ -10,12 +10,11 @@ export const seedTopics = async () => {
         return
     }
 
-    // Criação dos tópicos
     const rootTopic = new TopicEntity()
     rootTopic.name = 'Social Media Trends'
     rootTopic.content =
         'Discussing the latest trends and changes in the social media landscape.'
-    rootTopic.parentTopicId = null // Como não tem pai
+    rootTopic.parentTopicId = null
     await topicRepository.save(rootTopic)
 
     const childTopic1 = new TopicEntity()
