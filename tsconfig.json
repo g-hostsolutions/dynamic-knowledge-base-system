@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "target": "ES2017",     
+    "module": "commonjs",   
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "types": ["node", "jest"],
+    "typeRoots": ["node_modules/@types"],
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "lib": ["ES7", "ESNext"],
+    "sourceMap": true,
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "rootDir": "./",
+    "paths": {
+      "src": ["./src/*"],
+      "entities": ["./src/system/database/entities/*"],
+      "migrations": ["./src/system/database/migrations/*"]
+    },
+    "incremental": true
+  },
+  "include": ["src/**/*.ts", "tests/**/*.ts"],
+  "exclude": ["node_modules"]
+}
+
