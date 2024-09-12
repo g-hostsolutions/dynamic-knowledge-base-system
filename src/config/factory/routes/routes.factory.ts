@@ -7,6 +7,7 @@ import { CheckUserPermissionMiddleware } from '../../middlewares/userRoles/check
 import { UpdateTopicDTO } from '../../../modules/topics/dtos/topic.update.dto'
 import { TopicSearchDTO } from '../../../modules/topics/dtos/search/topic.search.dto'
 import { TopicVersionSearchDTO } from '../../../modules/topics/dtos/search/topicVersion.search.dto'
+import { TopicPathFinderDTO } from '../../../modules/topics/dtos/search/topicPathFinder.dto'
 
 export class RouteFactory {
     private router: Router
@@ -51,6 +52,13 @@ export class RouteFactory {
             CheckUserPermissionMiddleware.checkPermissions({ canView: true }),
             ClassValidator.validateAndThrow(TopicVersionSearchDTO),
             this.bindPath(this.topicController, 'getTopicsByVersion'),
+        )
+
+        this.router.get(
+            '/topics/pathFinder',
+            CheckUserPermissionMiddleware.checkPermissions({ canView: true }),
+            ClassValidator.validateAndThrow(TopicPathFinderDTO),
+            this.bindPath(this.topicController, 'getShortestPath'),
         )
 
         this.router.get(

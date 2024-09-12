@@ -89,7 +89,6 @@ export class ServerFactory {
                     console.error('Error during shutdown:', err)
                 }
                 await this.stopDatabase()
-                console.log('Server stopped.')
             })
         }
 
@@ -97,10 +96,14 @@ export class ServerFactory {
     }
 
     public async stop(): Promise<void> {
-        console.log(
-            'Graceful shutdown initiated. Waiting for ongoing requests to finish...',
-        )
+        try {
+            console.log(
+                'Graceful shutdown initiated. Waiting for ongoing requests to finish...',
+            )
 
-        await this.handleShutdown()
+            await this.handleShutdown()
+        } catch (error) {
+            console.log(error)
+        }
     }
 }

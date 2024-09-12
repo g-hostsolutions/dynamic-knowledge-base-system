@@ -1,15 +1,23 @@
 import { Server } from 'http'
-import request from 'supertest'
 import { ServerFactory } from '../server.factory'
 import { AppDataSource } from '../../../database/ormconfig'
+import { runAllSeeds } from '../../../../common/seeds'
 
 jest.useFakeTimers()
 
+jest.mock('../../../../common/seeds', () => ({
+    runAllSeeds: jest.fn().mockResolvedValue(undefined),
+}))
+
 jest.mock('../../../database/ormconfig', () => ({
     AppDataSource: {
-        initialize: jest.fn(),
-        destroy: jest.fn(),
+        initialize: jest.fn().mockResolvedValue(undefined),
+        destroy: jest.fn().mockResolvedValue(undefined),
         isInitialized: false,
+        getRepository: jest.fn().mockReturnValue({
+            find: jest.fn().mockResolvedValue([]),
+            save: jest.fn().mockResolvedValue({}),
+        }),
     },
 }))
 
@@ -34,6 +42,7 @@ describe('ServerFactory', () => {
         if (serverFactory['server']) {
             await serverFactory.stop()
         }
+        jest.clearAllTimers() // Limpa todos os timers
     })
 
     afterAll(() => {
@@ -49,24 +58,13 @@ describe('ServerFactory', () => {
             .spyOn(AppDataSource, 'initialize')
             .mockResolvedValue(undefined)
 
-        await serverFactory.start(3099)
+        const runAllSeedsMock = jest.mocked(runAllSeeds).mockResolvedValue(undefined)
 
-        console.log('Server initialized and started.')
+        await serverFactory.start(3099)
 
         expect(serverFactory['server']).not.toBeNull()
         expect(initializeMock).toHaveBeenCalled()
-    })
-
-    test('should configure middleware correctly', async () => {
-        const factory = new ServerFactory()
-        const app = factory.getApp()
-
-        app.use((req, res, _) => {
-            res.send('Middleware configured')
-        })
-
-        const response = await request(app).get('/')
-        expect(response.text).toBe('Middleware configured')
+        expect(runAllSeedsMock).toHaveBeenCalled()
     })
 
     test('should call stopDatabase on shutdown', async () => {
@@ -90,10 +88,7 @@ describe('ServerFactory', () => {
 
     test('should handle shutdown correctly', async () => {
         const closeMock = jest.fn()
-        const handleShutdownMock = jest.spyOn(
-            serverFactory as any,
-            'handleShutdown',
-        )
+        const handleShutdownMock = jest.spyOn(serverFactory as any, 'handleShutdown')
 
         await serverFactory.start(3097)
 

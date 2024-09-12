@@ -5,7 +5,11 @@ import { TopicEntity } from '../entity/topics.entity'
 export class UpdateTopicDTO extends PickType(TopicEntity, ['content']) {
     static validators(): ValidationChain[] {
         return [
-            param('id').notEmpty().withMessage('id is required.'),
+            param('id')
+                .isNumeric()
+                .withMessage('id needs to be numeric.')
+                .notEmpty()
+                .withMessage('id is required.'),
             body('content')
                 .optional()
                 .isString()

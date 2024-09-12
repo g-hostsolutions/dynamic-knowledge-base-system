@@ -8,6 +8,8 @@ const config: Config = {
     collectCoverage: true,
     coverageDirectory: '<rootDir>/coverage',
     coverageReporters: ['json', 'lcov', 'text', 'clover'],
+    testPathIgnorePatterns: ['/node_modules/', '/src/common/seeds/'],
+    coveragePathIgnorePatterns: ['/node_modules/', '/src/common/seeds/'],
 }
 
 export default config

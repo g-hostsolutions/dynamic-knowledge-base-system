@@ -18,17 +18,19 @@ export class ValidatorError extends HttpError {
     }
 
     toJSON() {
-        return {
-            statusCode: this.statusCode,
+        const thios = {
+            statusCode: this.statusCode || 500,
             message: this.message,
-            errors: this.errors.map(error => {
+            errors: this?.errors?.map(error => {
                 return {
                     param: error['param'] || null,
                     msg: error.msg || null,
                     location: error['location'] || null,
                     value: error['value'] !== undefined ? error['value'] : null,
                 }
-            }),
+            }) || ['Internal  Server  Error'],
         }
+
+        return thios
     }
 }
