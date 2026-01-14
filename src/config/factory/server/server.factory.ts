@@ -5,14 +5,18 @@ import { RouteFactory } from '../routes/routes.factory'
 import { runAllSeeds } from '../../../common/seeds'
 import { authMiddleware } from '../../middlewares/auth/auth.middleware'
 import { ErrorHandler } from '../../middlewares/error/errorHandler.middleware'
+import { GraphQLFactory } from '../graphql/graphql.factory'
 
 export class ServerFactory {
     private app: Application
 
     private server: Server | null = null
 
+    private graphqlFactory: GraphQLFactory
+
     constructor() {
         this.app = express()
+        this.graphqlFactory = new GraphQLFactory()
         this.configureInitialMiddlewares()
         this.disableHeaders()
         this.configureRoutes()
@@ -60,6 +64,7 @@ export class ServerFactory {
     public async start(port: number): Promise<void> {
         try {
             await this.initializeDatabase()
+            this.graphqlFactory.apply(this.app)
             this.server = this.app.listen(port, () => {
                 console.log(`Server running on port ${port}`)
             })
