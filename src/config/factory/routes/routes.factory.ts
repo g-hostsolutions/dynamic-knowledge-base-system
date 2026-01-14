@@ -1,25 +1,18 @@
 import { Application, Router } from 'express'
-import { TopicController } from '../../../modules/topics/controller/topics.controller'
 import { HealthController } from '../../../modules/health/controller/health.controller'
-import { CreateTopicDTO } from '../../../modules/topics/dtos/topic.create.dto'
-import { ClassValidator } from '../../../common/validator/classValidator.validator'
-import { CheckUserPermissionMiddleware } from '../../middlewares/userRoles/checkUser.middleware'
-import { UpdateTopicDTO } from '../../../modules/topics/dtos/topic.update.dto'
-import { TopicSearchDTO } from '../../../modules/topics/dtos/search/topic.search.dto'
-import { TopicVersionSearchDTO } from '../../../modules/topics/dtos/search/topicVersion.search.dto'
-import { TopicPathFinderDTO } from '../../../modules/topics/dtos/search/topicPathFinder.dto'
+import { UserController } from '../../../modules/users/controller/users.controller'
 
 export class RouteFactory {
     private router: Router
 
-    private topicController: TopicController
-
     private healthController: HealthController
+
+    private userController: UserController
 
     constructor() {
         this.router = Router()
-        this.topicController = new TopicController()
         this.healthController = new HealthController()
+        this.userController = new UserController()
         this.configureRoutes()
     }
 
@@ -39,54 +32,15 @@ export class RouteFactory {
         )
     }
 
-    private configureTopicRoutes() {
-        console.log('Configuring topic routes')
-        this.router.get(
-            '/topics',
-            CheckUserPermissionMiddleware.checkPermissions({ canView: true }),
-            this.bindPath(this.topicController, 'getAllTopics'),
-        )
-
-        this.router.get(
-            '/topics/version',
-            CheckUserPermissionMiddleware.checkPermissions({ canView: true }),
-            ClassValidator.validateAndThrow(TopicVersionSearchDTO),
-            this.bindPath(this.topicController, 'getTopicsByVersion'),
-        )
-
-        this.router.get(
-            '/topics/pathFinder',
-            CheckUserPermissionMiddleware.checkPermissions({ canView: true }),
-            ClassValidator.validateAndThrow(TopicPathFinderDTO),
-            this.bindPath(this.topicController, 'getShortestPath'),
-        )
-
-        this.router.get(
-            '/topics/:id',
-            CheckUserPermissionMiddleware.checkPermissions({ canView: true }),
-            ClassValidator.validateAndThrow(TopicSearchDTO),
-            this.bindPath(this.topicController, 'getTopicTreeById'),
-        )
-
-        this.router.post(
-            '/topics',
-            CheckUserPermissionMiddleware.checkPermissions({ canCreate: true }),
-            ClassValidator.validateAndThrow(CreateTopicDTO),
-            this.bindPath(this.topicController, 'createTopic'),
-        )
-
-        this.router.put(
-            '/topics/:id',
-            CheckUserPermissionMiddleware.checkPermissions({ canEdit: true }),
-            ClassValidator.validateAndThrow(UpdateTopicDTO),
-            this.bindPath(this.topicController, 'updateTopic'),
-        )
+    private configureUsersRoutes() {
+        console.log('Configuring users routes')
+        this.router.get('/users', this.bindPath(this.userController, 'getAllUsers'))
     }
 
     private configureRoutes(): void {
         console.log('Configuring routes...')
         this.configureHealthRoutes()
-        this.configureTopicRoutes()
+        this.configureUsersRoutes()
     }
 
     public applyRoutes(app: Application): void {

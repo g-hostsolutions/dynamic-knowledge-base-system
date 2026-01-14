@@ -5,7 +5,6 @@ import { RouteFactory } from '../routes/routes.factory'
 import { runAllSeeds } from '../../../common/seeds'
 import { authMiddleware } from '../../middlewares/auth/auth.middleware'
 import { ErrorHandler } from '../../middlewares/error/errorHandler.middleware'
-import { checkUserRoleMiddleware } from '../../middlewares/userRoles/userAuth.middleware'
 
 export class ServerFactory {
     private app: Application
@@ -29,7 +28,6 @@ export class ServerFactory {
         this.app.use(json())
         this.app.use(urlencoded({ extended: false }))
         this.app.use(authMiddleware)
-        this.app.use(checkUserRoleMiddleware)
     }
 
     private configureMiddleware(): void {

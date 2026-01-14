@@ -12,13 +12,13 @@ export abstract class CommonBaseEntity implements ICommonBaseEntity {
     id: number
 
     @CreateDateColumn({
-        type: 'datetime',
+        type: 'timestamp',
         default: () => 'CURRENT_TIMESTAMP',
     })
     createdAt: Date
 
     @UpdateDateColumn({
-        type: 'datetime',
+        type: 'timestamp',
         default: () => 'CURRENT_TIMESTAMP',
     })
     updatedAt: Date
